@@ -3,6 +3,7 @@
     "test": "vitest"
   },
   "devDependencies": {
+    "axios": "^1.6.8",
     "nock": "^13.5.4",
     "vitest": "^1.4.0"
   },
