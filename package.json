@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "nock": "^13.5.4",
+    "vitest": "^1.4.0"
+  },
+  "dependencies": {
+    "vite": "^5.2.8"
+  }
+}
