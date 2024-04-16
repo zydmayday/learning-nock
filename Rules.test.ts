@@ -1,6 +1,23 @@
-import { BigJoker, Card, CardSuit, King, LittleJoker } from "./Cards";
+import {
+  BigJoker,
+  Card,
+  CardSuit,
+  Jack,
+  King,
+  LittleJoker,
+  Queen,
+} from "./Cards";
 import { isValid, isValidPlay } from "./Rules";
 import random from "lodash.random";
+
+const createSameCards = (num: number, _rank?: number) => {
+  const rank = _rank || random(1, King);
+  const cards = [];
+  for (let i = 0; i < num; i++) {
+    cards.push(new Card(rank, CardSuit.club));
+  }
+  return cards;
+};
 
 describe("test Rules", () => {
   const speical = 2;
@@ -86,43 +103,176 @@ describe("test Rules", () => {
         });
         it("3 - 8 cards bomb, with special", () => {
           for (let num = 3; num <= 8; num++) {
-            const rank = random(1, King);
-            const cards = [];
-            for (let i = 0; i < num; i++) {
-              cards.push(new Card(rank, CardSuit.club));
-            }
-            cards.push(new Card(speical, CardSuit.heart));
-            expect(isValid(cards, speical)).toBeTruthy();
+            const bomb = createSameCards(num);
+            bomb.push(new Card(speical, CardSuit.heart));
+            expect(isValid(bomb, speical)).toBeTruthy();
           }
         });
         it("2 - 8 cards bomb, with 2 specials", () => {
           for (let num = 3; num <= 8; num++) {
-            const rank = random(1, King);
-            const cards = [];
-            for (let i = 0; i < num; i++) {
-              cards.push(new Card(rank, CardSuit.club));
-            }
-            cards.push(new Card(speical, CardSuit.heart));
-            cards.push(new Card(speical, CardSuit.heart));
-            expect(isValid(cards, speical)).toBeTruthy();
+            const bomb = createSameCards(num);
+            bomb.push(new Card(speical, CardSuit.heart));
+            bomb.push(new Card(speical, CardSuit.heart));
+            expect(isValid(bomb, speical)).toBeTruthy();
           }
         });
+        it("test joker bomb", () => {
+          expect(
+            isValid(
+              [
+                new Card(LittleJoker),
+                new Card(LittleJoker),
+                new Card(BigJoker),
+                new Card(BigJoker),
+              ],
+              speical
+            )
+          ).toBeTruthy();
+        });
+      });
+      describe("invalid bomn", () => {
         it("> 8 cards bomb", () => {
-          const rank = random(1, King);
-          const cards = [];
-          for (let i = 0; i < 9; i++) {
-            cards.push(new Card(rank, CardSuit.club));
-          }
-          expect(isValid(cards, speical)).toBeFalsy();
+          const bomb = createSameCards(9);
+          expect(isValid(bomb, speical)).toBeFalsy();
         });
         it("> 8 cards bomb, with specials", () => {
-          const rank = random(1, King);
-          const cards = [];
-          for (let i = 0; i < 9; i++) {
-            cards.push(new Card(rank, CardSuit.club));
-          }
+          const bomb = createSameCards(9);
+          bomb.push(new Card(speical, CardSuit.heart));
+          bomb.push(new Card(speical, CardSuit.heart));
+          expect(isValid(bomb, speical)).toBeFalsy();
+        });
+        it("> 4 but with joker", () => {
+          const bomb = createSameCards(4);
+          bomb.push(new Card(LittleJoker));
+          expect(isValid(bomb, speical)).toBeFalsy();
+        });
+      });
+    });
+
+    describe("test 4 cards invalid case", () => {
+      it("test 3 + 1", () => {
+        const cards = createSameCards(3, King);
+        cards.push(new Card(Queen, CardSuit.club));
+        expect(cards).toHaveLength(4);
+        expect(isValid(cards, speical)).toBeFalsy();
+      });
+      it("test 2 + 2", () => {
+        const cards = createSameCards(2, King);
+        cards.push(...createSameCards(2, Queen));
+        expect(cards).toHaveLength(4);
+        expect(isValid(cards, speical)).toBeFalsy();
+      });
+      it("test 2 + 1 + 1", () => {
+        const cards = createSameCards(2, King);
+        cards.push(new Card(Jack, CardSuit.club));
+        cards.push(new Card(Queen, CardSuit.club));
+        expect(cards).toHaveLength(4);
+        expect(isValid(cards, speical)).toBeFalsy();
+      });
+      it("test 1 + 1 + 1 + 1", () => {
+        const cards = [];
+        cards.push(new Card(10, CardSuit.club));
+        cards.push(new Card(Jack, CardSuit.club));
+        cards.push(new Card(Queen, CardSuit.club));
+        cards.push(new Card(King, CardSuit.club));
+        expect(cards).toHaveLength(4);
+        expect(isValid(cards, speical)).toBeFalsy();
+      });
+      it("test 2 + 1 + special", () => {
+        const cards = createSameCards(2, King);
+        cards.push(new Card(Queen, CardSuit.club));
+        cards.push(new Card(speical, CardSuit.heart));
+        expect(cards).toHaveLength(4);
+        expect(isValid(cards, speical)).toBeFalsy();
+      });
+      it("test 3 + joker", () => {
+        const cards = createSameCards(3, King);
+        cards.push(new Card(LittleJoker));
+        expect(cards).toHaveLength(4);
+        expect(isValid(cards, speical)).toBeFalsy();
+      });
+    });
+
+    describe("test 3 + 2", () => {
+      describe("test valid case", () => {
+        it("test 3 + 2", () => {
+          const cards = createSameCards(3, King);
+          const twos = createSameCards(2, Queen);
+          cards.push(...twos);
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it("test 3 + 2 big joker", () => {
+          const cards = createSameCards(3, King);
+          const twos = createSameCards(2, BigJoker);
+          cards.push(...twos);
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it("test 3 + 1 + speicial", () => {
+          const cards = createSameCards(3, King);
+          cards.push(new Card(Queen, CardSuit.club));
+          cards.push(new Card(speical, CardSuit.heart));
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it("test 2 + 2 + speicial", () => {
+          const cards = createSameCards(2, King);
+          const queens = createSameCards(2, Queen);
+          cards.push(new Card(speical, CardSuit.heart));
+          cards.push(...queens);
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it("test 2 + 1 + 2 specials", () => {
+          const cards = createSameCards(2, King);
+          cards.push(new Card(Queen, CardSuit.club));
           cards.push(new Card(speical, CardSuit.heart));
           cards.push(new Card(speical, CardSuit.heart));
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+      });
+      describe("test invalid case", () => {
+        it("test 3 + 1 + 1", () => {
+          const cards = createSameCards(3, King);
+          cards.push(new Card(Queen, CardSuit.club));
+          cards.push(new Card(Jack, CardSuit.club));
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeFalsy();
+        });
+        it("test 2 + 1 + 1 + 1", () => {
+          const cards = createSameCards(2, King);
+          cards.push(new Card(Queen, CardSuit.club));
+          cards.push(new Card(Jack, CardSuit.club));
+          cards.push(new Card(10, CardSuit.club));
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeFalsy();
+        });
+        it("test 2 + 1 + 1 + special", () => {
+          const cards = createSameCards(2, King);
+          cards.push(new Card(Queen, CardSuit.club));
+          cards.push(new Card(Jack, CardSuit.club));
+          cards.push(new Card(speical, CardSuit.heart));
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeFalsy();
+        });
+        it("test 1 + 1 + 1 + 2 specials", () => {
+          const cards = [new Card(King, CardSuit.club)];
+          cards.push(new Card(Queen, CardSuit.club));
+          cards.push(new Card(Jack, CardSuit.club));
+          cards.push(new Card(speical, CardSuit.heart));
+          cards.push(new Card(speical, CardSuit.heart));
+          expect(cards).toHaveLength(5);
+          expect(isValid(cards, speical)).toBeFalsy();
+        });
+        it("test 1 + 1 + 1 + 1 + 1", () => {
+          const cards = [new Card(King, CardSuit.club)];
+          cards.push(new Card(Queen, CardSuit.club));
+          cards.push(new Card(Jack, CardSuit.club));
+          cards.push(new Card(10, CardSuit.club));
+          cards.push(new Card(8, CardSuit.club));
+          expect(cards).toHaveLength(5);
           expect(isValid(cards, speical)).toBeFalsy();
         });
       });

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "lodash.clone": "^4.5.0",
+    "lodash.groupby": "^4.6.0",
     "lodash.random": "^3.2.0",
     "lodash.shuffle": "^4.2.0",
     "lodash.slice": "^4.2.0",
