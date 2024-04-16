@@ -22,7 +22,7 @@ export const BigJoker = 15;
  * 14: Little Joker
  * 15: Big Joker
  */
-class Card {
+export class Card {
   rank: number;
   suit?: CardSuit;
 
