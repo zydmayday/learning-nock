@@ -29,4 +29,12 @@ describe("test Cards", () => {
     const shuffledDeck = deck.shuffle();
     expect(shuffledDeck.cards).toHaveLength(108);
   });
+
+  it("test deal card", () => {
+    const hands = deck.deal();
+    expect(hands).toHaveLength(4);
+    for (let i = 0; i < 4; i++) {
+      expect(hands[i]).toHaveLength(27);
+    }
+  });
 });

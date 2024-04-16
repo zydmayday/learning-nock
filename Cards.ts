@@ -1,4 +1,5 @@
 import shuffle from "lodash.shuffle";
+import slice from "lodash.slice";
 
 export enum CardSuit {
   club = "♣",
@@ -72,6 +73,16 @@ export class MyDeck implements Deck {
         return aggr + " " + card.toString();
       }, "")
     );
+  }
+
+  deal(): Card[][] {
+    const hands = [];
+    let start = 0;
+    hands.push(slice(this.cards, start, (start += 27)));
+    hands.push(slice(this.cards, start, (start += 27)));
+    hands.push(slice(this.cards, start, (start += 27)));
+    hands.push(slice(this.cards, start, (start += 27)));
+    return hands;
   }
 }
 
