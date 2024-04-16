@@ -1,7 +1,6 @@
 import shuffle from "lodash.shuffle";
-import { s } from "vitest/dist/reporters-P7C2ytIv";
 
-enum CardSuit {
+export enum CardSuit {
   club = "♣",
   diamond = "♦",
   heart = "♥",
@@ -33,20 +32,20 @@ class Card {
 
   toString(): string {
     let rank;
-    if(this.rank <= 10) {
+    if (this.rank <= 10) {
       rank = this.rank;
-    } else if(this.rank === 11) {
-      rank = 'J';
-    } else if(this.rank === 12) {
-      rank = 'Q';
-    } else if(this.rank === 13) {
-      rank = 'K';
-    } else if(this.rank === 14) {
-      rank = 'LitJoker';
-    } else if(this.rank === 15) {
-      rank = 'BigJoker';
+    } else if (this.rank === 11) {
+      rank = "J";
+    } else if (this.rank === 12) {
+      rank = "Q";
+    } else if (this.rank === 13) {
+      rank = "K";
+    } else if (this.rank === 14) {
+      rank = "LitJoker";
+    } else if (this.rank === 15) {
+      rank = "BigJoker";
     }
-    return `${this.suit || ''}${rank}`;
+    return `${this.suit || ""}${rank}`;
   }
 }
 
@@ -70,12 +69,17 @@ export class MyDeck implements Deck {
   print() {
     console.log(
       this.cards.reduce((aggr, card) => {
-        return aggr + ' ' + card.toString();
+        return aggr + " " + card.toString();
       }, "")
     );
   }
 }
 
+/**
+ * create 108 cards.
+ *
+ * @returns new deck
+ */
 export const createDeck = (): MyDeck => {
   const cards: Card[] = [];
   for (const suit of [
@@ -87,7 +91,12 @@ export const createDeck = (): MyDeck => {
     for (let rank = 1; rank < 14; rank++) {
       cards.push(new Card(rank, suit));
     }
+    for (let rank = 1; rank < 14; rank++) {
+      cards.push(new Card(rank, suit));
+    }
   }
+  cards.push(new Card(LittleJoker));
+  cards.push(new Card(BigJoker));
   cards.push(new Card(LittleJoker));
   cards.push(new Card(BigJoker));
   return new MyDeck(cards);
