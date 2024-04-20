@@ -1,14 +1,32 @@
-import { BigJoker, Card, CardSuit, King, LittleJoker } from "./Cards";
+import { BigJoker, Card, CardSuit, K, LittleJoker } from "./Cards";
 import groupBy from "lodash.groupby";
 
 const isSpecial = (card: Card, special: number) => {
   return card.rank === special && card.suit === CardSuit.heart;
 };
 
+const hasJoker = (cards: Card[]) => {
+  return cards.some((c) => c.rank >= LittleJoker);
+};
+
+/**
+ * check if cards has special one.
+ *
+ * @param cards cards to play
+ * @param special special rank
+ * @returns true if has special
+ */
 const hasSpecial = (cards: Card[], special: number) => {
   return cards.some((c) => isSpecial(c, special));
 };
 
+/**
+ * check if special AND cards is valid.
+ *
+ * @param cards cards to play
+ * @param special special rank
+ * @returns true if cards has special and valid
+ */
 const hasSpecialValid = (cards: Card[], special: number) => {
   return (
     hasSpecial(cards, special) &&
@@ -17,6 +35,48 @@ const hasSpecialValid = (cards: Card[], special: number) => {
       special
     )
   );
+};
+
+const isStraight = (cards: Card[], special: number) => {
+  if (cards.length !== 5) {
+    return false;
+  }
+  if (hasJoker(cards)) {
+    return false;
+  }
+  const sorted = cards
+    .toSorted()
+    .filter((c) => !isSpecial(c, special))
+    .sort((c1, c2) => c1.rank - c2.rank);
+  let specialSKip = 5 - sorted.length;
+
+  if (new Set(sorted).size !== sorted.length) {
+    return false;
+  }
+
+  const isStraightInner = (sorted: Card[], specialSKip: number) => {
+    let head = sorted.shift().rank;
+    for (let i = 0; i < sorted.length; ) {
+      if (sorted[i].rank === head + 1) {
+        i += 1;
+        head += 1;
+      } else if (specialSKip !== 0) {
+        specialSKip -= 1;
+        head += 1;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  let result = isStraightInner([...sorted], specialSKip);
+  if (sorted[0].rank === 1) {
+    sorted.shift();
+    sorted.push(new Card(14, CardSuit.club));
+    result = result || isStraightInner([...sorted], specialSKip);
+  }
+  return result;
 };
 
 /**
@@ -62,7 +122,7 @@ export const isValid = (cards: Card[], special: number) => {
       return false;
     }
     // joker case
-    if (cards[0].rank > King) {
+    if (cards[0].rank > K) {
       return (
         cards.filter((card) => card.rank === LittleJoker).length === 2 &&
         cards.filter((card) => card.rank === BigJoker).length === 2
@@ -83,12 +143,20 @@ export const isValid = (cards: Card[], special: number) => {
           return true;
         }
       }
-      if (hasSpecial(cards, special)) {
+      if (
+        hasSpecial(cards, special) &&
+        cards
+          .filter((c) => c.rank === special)
+          .every((c) => c.suit === CardSuit.heart)
+      ) {
         if (keys.length === 3) {
           return true;
         }
       }
-      // flush
+      // straight
+      if (isStraight(cards, special)) {
+        return true;
+      }
     }
   }
   return false;

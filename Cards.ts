@@ -8,9 +8,9 @@ export enum CardSuit {
   spade = "♠",
 }
 
-export const Jack = 11;
-export const Queen = 12;
-export const King = 13;
+export const J = 11;
+export const Q = 12;
+export const K = 13;
 export const LittleJoker = 14;
 export const BigJoker = 15;
 
