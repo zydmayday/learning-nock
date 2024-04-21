@@ -448,5 +448,157 @@ describe("test Rules", () => {
         );
       });
     });
+
+    describe("test three pairs", () => {
+      describe("test valid case", () => {
+        it.each`
+          r1    | r2   | r3
+          ${1}  | ${2} | ${3}
+          ${4}  | ${2} | ${3}
+          ${4}  | ${5} | ${3}
+          ${4}  | ${5} | ${6}
+          ${7}  | ${5} | ${6}
+          ${7}  | ${8} | ${6}
+          ${7}  | ${8} | ${9}
+          ${10} | ${8} | ${9}
+          ${10} | ${J} | ${9}
+          ${10} | ${J} | ${Q}
+          ${K}  | ${J} | ${Q}
+          ${K}  | ${1} | ${Q}
+        `("test without special: $r1, $r2, $r3", ({ r1, r2, r3 }) => {
+          const cards = [
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r3, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r3, CardSuit.club),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it.each`
+          r1   | r2   | r3   | r4   | r5
+          ${1} | ${1} | ${2} | ${2} | ${3}
+          ${1} | ${2} | ${2} | ${3} | ${3}
+          ${1} | ${1} | ${2} | ${3} | ${3}
+          ${Q} | ${Q} | ${K} | ${K} | ${1}
+          ${Q} | ${Q} | ${K} | ${1} | ${1}
+          ${Q} | ${K} | ${K} | ${1} | ${1}
+        `(
+          "test with 1 special: $r1, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(speical, CardSuit.heart),
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeTruthy();
+          }
+        );
+        it.each`
+          r1   | r2   | r3   | r4
+          ${1} | ${1} | ${2} | ${2}
+          ${1} | ${1} | ${2} | ${3}
+          ${1} | ${1} | ${3} | ${3}
+          ${1} | ${2} | ${2} | ${3}
+          ${1} | ${2} | ${3} | ${3}
+          ${2} | ${2} | ${3} | ${3}
+          ${Q} | ${Q} | ${K} | ${K}
+          ${Q} | ${Q} | ${K} | ${1}
+          ${Q} | ${Q} | ${1} | ${1}
+          ${Q} | ${K} | ${K} | ${1}
+          ${Q} | ${K} | ${1} | ${1}
+          ${1} | ${K} | ${K} | ${1}
+        `("test with 2 specials: $r1, $r2, $r3, $r4", ({ r1, r2, r3, r4 }) => {
+          const cards = [
+            new Card(speical, CardSuit.heart),
+            new Card(speical, CardSuit.heart),
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r3, CardSuit.club),
+            new Card(r4, CardSuit.club),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+      });
+
+      describe("test invalid case", () => {
+        it.each`
+          r1   | r2   | r3          | r4          | r5             | r6
+          ${1} | ${1} | ${2}        | ${2}        | ${3}           | ${4}
+          ${1} | ${1} | ${2}        | ${3}        | ${3}           | ${4}
+          ${1} | ${2} | ${2}        | ${3}        | ${3}           | ${4}
+          ${1} | ${1} | ${1}        | ${2}        | ${2}           | ${3}
+          ${1} | ${1} | ${2}        | ${2}        | ${2}           | ${3}
+          ${1} | ${1} | ${2}        | ${3}        | ${3}           | ${3}
+          ${Q} | ${Q} | ${K}        | ${K}        | ${1}           | ${LittleJoker}
+          ${Q} | ${Q} | ${K}        | ${K}        | ${LittleJoker} | ${LittleJoker}
+          ${K} | ${K} | ${BigJoker} | ${BigJoker} | ${LittleJoker} | ${LittleJoker}
+        `(
+          "test without speicial: $r1, $r2, $r3, $r4, $r5, $r6",
+          ({ r1, r2, r3, r4, r5, r6 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+              new Card(r6, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
+        it.each`
+          r1   | r2   | r3   | r4   | r5
+          ${1} | ${1} | ${2} | ${2} | ${4}
+          ${1} | ${1} | ${2} | ${3} | ${4}
+          ${1} | ${2} | ${2} | ${3} | ${4}
+          ${1} | ${1} | ${1} | ${2} | ${3}
+          ${1} | ${1} | ${1} | ${1} | ${2}
+          ${Q} | ${Q} | ${K} | ${K} | ${2}
+          ${Q} | ${Q} | ${K} | ${1} | ${2}
+          ${Q} | ${K} | ${K} | ${1} | ${2}
+        `(
+          "test without 1 speicial: $r1, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+              new Card(speical, CardSuit.heart),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
+        it.each`
+          r1   | r2   | r3   | r4
+          ${1} | ${1} | ${2} | ${4}
+          ${1} | ${1} | ${4} | ${3}
+          ${1} | ${2} | ${2} | ${4}
+          ${1} | ${2} | ${3} | ${4}
+          ${2} | ${2} | ${3} | ${5}
+          ${Q} | ${Q} | ${K} | ${2}
+          ${Q} | ${Q} | ${1} | ${2}
+          ${Q} | ${K} | ${K} | ${2}
+          ${Q} | ${K} | ${1} | ${2}
+          ${1} | ${K} | ${K} | ${2}
+        `("test with 2 specials: $r1, $r2, $r3, $r4", ({ r1, r2, r3, r4 }) => {
+          const cards = [
+            new Card(speical, CardSuit.heart),
+            new Card(speical, CardSuit.heart),
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r3, CardSuit.club),
+            new Card(r4, CardSuit.club),
+          ];
+          expect(isValid(cards, speical)).toBeFalsy();
+        });
+      });
+    });
   });
 });

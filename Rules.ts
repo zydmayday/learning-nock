@@ -37,6 +37,22 @@ const hasSpecialValid = (cards: Card[], special: number) => {
   );
 };
 
+const sortedWithoutSpecial = (cards: Card[], special: number) => {
+  return cards
+    .filter((c) => !isSpecial(c, special))
+    .toSorted((c1, c2) => c1.rank - c2.rank);
+};
+
+/**
+ * Check if is valid straight.
+ * e.g valid examples:
+ * 1,2,3,4,5
+ * 10,J,Q,K,A
+ *
+ * @param cards cards to play
+ * @param special special rank
+ * @returns true if cards is valid
+ */
 const isStraight = (cards: Card[], special: number) => {
   if (cards.length !== 5) {
     return false;
@@ -44,10 +60,7 @@ const isStraight = (cards: Card[], special: number) => {
   if (hasJoker(cards)) {
     return false;
   }
-  const sorted = cards
-    .toSorted()
-    .filter((c) => !isSpecial(c, special))
-    .sort((c1, c2) => c1.rank - c2.rank);
+  const sorted = sortedWithoutSpecial(cards, special);
   let specialSKip = 5 - sorted.length;
 
   if (new Set(sorted).size !== sorted.length) {
@@ -76,6 +89,56 @@ const isStraight = (cards: Card[], special: number) => {
     sorted.push(new Card(14, CardSuit.club));
     result = result || isStraightInner([...sorted], specialSKip);
   }
+  return result;
+};
+
+/**
+ * check if is valid three pairs.
+ * e.g. valid examples,
+ * 1,1,2,2,3,3
+ * Q,Q,K,K,A,A
+ *
+ * @param cards cards to play
+ * @param special special rank
+ * @returns true if cards is valid three pairs
+ */
+const isValidThreePairs = (cards: Card[], special: number) => {
+  if (cards.length !== 6) {
+    return false;
+  }
+  if (hasJoker(cards)) {
+    return false;
+  }
+  const sorted = sortedWithoutSpecial(cards, special);
+  const groupedRank = groupBy(sorted.map((c) => c.rank));
+  const keys = Object.keys(groupedRank);
+  if (keys.length > 3 || keys.length < 2) {
+    return false;
+  }
+
+  const isValidThreePairsInner = (sorted: Card[]) => {
+    const count: Record<number, number> = {};
+    for (let i = 0; i < sorted.length; i++) {
+      count[sorted[i].rank] = (count[sorted[i].rank] || 0) + 1;
+      if (count[sorted[i].rank] > 2) {
+        return false;
+      }
+    }
+    const keys = Object.keys(count).map(Number);
+    const diff = keys.reduce(
+      (s, c, i, a) => (i < a.length - 1 ? s + a[i + 1] - c : s),
+      0
+    );
+    return diff <= 2;
+  };
+
+  let result = isValidThreePairsInner([...sorted]);
+  result ||= isValidThreePairsInner(
+    sorted
+      .map((c) => (c.rank === 1 ? new Card(14, CardSuit.club) : c))
+      .toSorted((c1, c2) => c1.rank - c2.rank)
+  );
+
   return result;
 };
 
@@ -154,9 +217,13 @@ export const isValid = (cards: Card[], special: number) => {
         }
       }
       // straight
-      if (isStraight(cards, special)) {
+      if (isStraight([...cards], special)) {
         return true;
       }
+    }
+    // three pairs
+    if (isValidThreePairs(cards, special)) {
+      return true;
     }
   }
   return false;
