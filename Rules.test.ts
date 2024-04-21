@@ -271,181 +271,182 @@ describe("test Rules", () => {
     });
 
     describe("test straight", () => {
-      it.each`
-        r1    | r2    | r3    | r4    | r5
-        ${1}  | ${2}  | ${3}  | ${4}  | ${5}
-        ${2}  | ${3}  | ${4}  | ${5}  | ${6}
-        ${3}  | ${4}  | ${5}  | ${6}  | ${7}
-        ${4}  | ${5}  | ${6}  | ${7}  | ${8}
-        ${5}  | ${6}  | ${7}  | ${8}  | ${9}
-        ${6}  | ${7}  | ${8}  | ${9}  | ${10}
-        ${7}  | ${8}  | ${9}  | ${10} | ${J}
-        ${8}  | ${9}  | ${10} | ${J}  | ${Q}
-        ${9}  | ${10} | ${J}  | ${Q}  | ${K}
-        ${10} | ${J}  | ${Q}  | ${K}  | ${1}
-      `(
-        "test valid case without special: $r1, $r2, $r3, $r4, $r5",
-        ({ r1, r2, r3, r4, r5 }) => {
-          const cards = [
-            new Card(r1, CardSuit.club),
-            new Card(r2, CardSuit.club),
-            new Card(r3, CardSuit.club),
-            new Card(r4, CardSuit.club),
-            new Card(r5, CardSuit.club),
-          ];
-          expect(isValid(cards, speical)).toBeTruthy();
-        }
-      );
+      describe("test valid case", () => {
+        it.each`
+          r1    | r2    | r3    | r4    | r5
+          ${1}  | ${2}  | ${3}  | ${4}  | ${5}
+          ${2}  | ${3}  | ${4}  | ${5}  | ${6}
+          ${3}  | ${4}  | ${5}  | ${6}  | ${7}
+          ${4}  | ${5}  | ${6}  | ${7}  | ${8}
+          ${5}  | ${6}  | ${7}  | ${8}  | ${9}
+          ${6}  | ${7}  | ${8}  | ${9}  | ${10}
+          ${7}  | ${8}  | ${9}  | ${10} | ${J}
+          ${8}  | ${9}  | ${10} | ${J}  | ${Q}
+          ${9}  | ${10} | ${J}  | ${Q}  | ${K}
+          ${10} | ${J}  | ${Q}  | ${K}  | ${1}
+        `(
+          "test valid case without special: $r1, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeTruthy();
+          }
+        );
 
-      it.each`
-        r1         | r2    | r3   | r4   | r5
-        ${speical} | ${2}  | ${3} | ${4} | ${5}
-        ${speical} | ${1}  | ${3} | ${4} | ${5}
-        ${speical} | ${1}  | ${2} | ${4} | ${5}
-        ${speical} | ${1}  | ${2} | ${3} | ${5}
-        ${speical} | ${1}  | ${2} | ${3} | ${4}
-        ${speical} | ${10} | ${J} | ${Q} | ${K}
-        ${speical} | ${10} | ${Q} | ${K} | ${1}
-        ${speical} | ${10} | ${J} | ${K} | ${1}
-        ${speical} | ${10} | ${J} | ${Q} | ${1}
-        ${speical} | ${J}  | ${Q} | ${K} | ${1}
-      `(
-        "test valid case with 1 speicial: $r1♥, $r2, $r3, $r4, $r5",
-        ({ r1, r2, r3, r4, r5 }) => {
-          const cards = [
-            new Card(r1, CardSuit.heart),
-            new Card(r2, CardSuit.club),
-            new Card(r3, CardSuit.club),
-            new Card(r4, CardSuit.club),
-            new Card(r5, CardSuit.club),
-          ];
-          expect(isValid(cards, speical)).toBeTruthy();
-        }
-      );
+        it.each`
+          r1         | r2    | r3   | r4   | r5
+          ${speical} | ${2}  | ${3} | ${4} | ${5}
+          ${speical} | ${1}  | ${3} | ${4} | ${5}
+          ${speical} | ${1}  | ${2} | ${4} | ${5}
+          ${speical} | ${1}  | ${2} | ${3} | ${5}
+          ${speical} | ${1}  | ${2} | ${3} | ${4}
+          ${speical} | ${10} | ${J} | ${Q} | ${K}
+          ${speical} | ${10} | ${Q} | ${K} | ${1}
+          ${speical} | ${10} | ${J} | ${K} | ${1}
+          ${speical} | ${10} | ${J} | ${Q} | ${1}
+          ${speical} | ${J}  | ${Q} | ${K} | ${1}
+        `(
+          "test valid case with 1 speicial: $r1♥, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.heart),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeTruthy();
+          }
+        );
 
-      it.each`
-        r1         | r2         | r3    | r4   | r5
-        ${speical} | ${speical} | ${1}  | ${2} | ${3}
-        ${speical} | ${speical} | ${1}  | ${2} | ${4}
-        ${speical} | ${speical} | ${1}  | ${2} | ${5}
-        ${speical} | ${speical} | ${1}  | ${3} | ${4}
-        ${speical} | ${speical} | ${1}  | ${3} | ${5}
-        ${speical} | ${speical} | ${1}  | ${4} | ${5}
-        ${speical} | ${speical} | ${2}  | ${3} | ${4}
-        ${speical} | ${speical} | ${2}  | ${3} | ${5}
-        ${speical} | ${speical} | ${2}  | ${4} | ${5}
-        ${speical} | ${speical} | ${3}  | ${4} | ${5}
-        ${speical} | ${speical} | ${10} | ${J} | ${Q}
-        ${speical} | ${speical} | ${10} | ${J} | ${K}
-        ${speical} | ${speical} | ${10} | ${J} | ${1}
-        ${speical} | ${speical} | ${10} | ${Q} | ${K}
-        ${speical} | ${speical} | ${10} | ${Q} | ${1}
-        ${speical} | ${speical} | ${10} | ${K} | ${1}
-        ${speical} | ${speical} | ${J}  | ${Q} | ${K}
-        ${speical} | ${speical} | ${J}  | ${Q} | ${1}
-        ${speical} | ${speical} | ${J}  | ${K} | ${1}
-        ${speical} | ${speical} | ${Q}  | ${K} | ${1}
-      `(
-        "test valid case with 2 speicials: $r1♥, $r2♥, $r3, $r4, $r5",
-        ({ r1, r2, r3, r4, r5 }) => {
-          const cards = [
-            new Card(r1, CardSuit.heart),
-            new Card(r2, CardSuit.heart),
-            new Card(r3, CardSuit.club),
-            new Card(r4, CardSuit.club),
-            new Card(r5, CardSuit.club),
-          ];
-          expect(isValid(cards, speical)).toBeTruthy();
-        }
-      );
-    });
+        it.each`
+          r1         | r2         | r3    | r4   | r5
+          ${speical} | ${speical} | ${1}  | ${2} | ${3}
+          ${speical} | ${speical} | ${1}  | ${2} | ${4}
+          ${speical} | ${speical} | ${1}  | ${2} | ${5}
+          ${speical} | ${speical} | ${1}  | ${3} | ${4}
+          ${speical} | ${speical} | ${1}  | ${3} | ${5}
+          ${speical} | ${speical} | ${1}  | ${4} | ${5}
+          ${speical} | ${speical} | ${2}  | ${3} | ${4}
+          ${speical} | ${speical} | ${2}  | ${3} | ${5}
+          ${speical} | ${speical} | ${2}  | ${4} | ${5}
+          ${speical} | ${speical} | ${3}  | ${4} | ${5}
+          ${speical} | ${speical} | ${10} | ${J} | ${Q}
+          ${speical} | ${speical} | ${10} | ${J} | ${K}
+          ${speical} | ${speical} | ${10} | ${J} | ${1}
+          ${speical} | ${speical} | ${10} | ${Q} | ${K}
+          ${speical} | ${speical} | ${10} | ${Q} | ${1}
+          ${speical} | ${speical} | ${10} | ${K} | ${1}
+          ${speical} | ${speical} | ${J}  | ${Q} | ${K}
+          ${speical} | ${speical} | ${J}  | ${Q} | ${1}
+          ${speical} | ${speical} | ${J}  | ${K} | ${1}
+          ${speical} | ${speical} | ${Q}  | ${K} | ${1}
+        `(
+          "test valid case with 2 speicials: $r1♥, $r2♥, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.heart),
+              new Card(r2, CardSuit.heart),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeTruthy();
+          }
+        );
+      });
+      describe("test invalid case", () => {
+        it.each`
+          r1    | r2   | r3   | r4             | r5
+          ${1}  | ${2} | ${3} | ${4}           | ${6}
+          ${1}  | ${3} | ${4} | ${5}           | ${6}
+          ${2}  | ${2} | ${3} | ${4}           | ${5}
+          ${1}  | ${2} | ${3} | ${4}           | ${4}
+          ${1}  | ${1} | ${2} | ${2}           | ${3}
+          ${1}  | ${1} | ${1} | ${2}           | ${3}
+          ${1}  | ${1} | ${1} | ${1}           | ${2}
+          ${J}  | ${Q} | ${K} | ${1}           | ${2}
+          ${10} | ${J} | ${Q} | ${K}           | ${LittleJoker}
+          ${J}  | ${Q} | ${K} | ${LittleJoker} | ${BigJoker}
+        `(
+          "test invalid case without special: $r1, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
 
-    describe("test invalid case", () => {
-      it.each`
-        r1    | r2   | r3   | r4             | r5
-        ${1}  | ${2} | ${3} | ${4}           | ${6}
-        ${1}  | ${3} | ${4} | ${5}           | ${6}
-        ${2}  | ${2} | ${3} | ${4}           | ${5}
-        ${1}  | ${2} | ${3} | ${4}           | ${4}
-        ${1}  | ${1} | ${2} | ${2}           | ${3}
-        ${1}  | ${1} | ${1} | ${2}           | ${3}
-        ${1}  | ${1} | ${1} | ${1}           | ${2}
-        ${J}  | ${Q} | ${K} | ${1}           | ${2}
-        ${10} | ${J} | ${Q} | ${K}           | ${LittleJoker}
-        ${J}  | ${Q} | ${K} | ${LittleJoker} | ${BigJoker}
-      `(
-        "test invalid case without special: $r1, $r2, $r3, $r4, $r5",
-        ({ r1, r2, r3, r4, r5 }) => {
-          const cards = [
-            new Card(r1, CardSuit.club),
-            new Card(r2, CardSuit.club),
-            new Card(r3, CardSuit.club),
-            new Card(r4, CardSuit.club),
-            new Card(r5, CardSuit.club),
-          ];
-          expect(isValid(cards, speical)).toBeFalsy();
-        }
-      );
+        it.each`
+          r1         | r2    | r3   | r4             | r5
+          ${speical} | ${2}  | ${3} | ${4}           | ${7}
+          ${speical} | ${1}  | ${3} | ${4}           | ${6}
+          ${speical} | ${1}  | ${2} | ${4}           | ${6}
+          ${speical} | ${2}  | ${2} | ${3}           | ${5}
+          ${speical} | ${1}  | ${2} | ${3}           | ${6}
+          ${speical} | ${8}  | ${J} | ${Q}           | ${K}
+          ${speical} | ${10} | ${Q} | ${K}           | ${2}
+          ${speical} | ${10} | ${J} | ${K}           | ${2}
+          ${speical} | ${9}  | ${J} | ${Q}           | ${1}
+          ${speical} | ${J}  | ${Q} | ${K}           | ${2}
+          ${speical} | ${10} | ${J} | ${Q}           | ${LittleJoker}
+          ${speical} | ${J}  | ${Q} | ${LittleJoker} | ${BigJoker}
+        `(
+          "test invalid case with 1 speicial: $r1♥, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.heart),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
 
-      it.each`
-        r1         | r2    | r3   | r4             | r5
-        ${speical} | ${2}  | ${3} | ${4}           | ${7}
-        ${speical} | ${1}  | ${3} | ${4}           | ${6}
-        ${speical} | ${1}  | ${2} | ${4}           | ${6}
-        ${speical} | ${2}  | ${2} | ${3}           | ${5}
-        ${speical} | ${1}  | ${2} | ${3}           | ${6}
-        ${speical} | ${8}  | ${J} | ${Q}           | ${K}
-        ${speical} | ${10} | ${Q} | ${K}           | ${2}
-        ${speical} | ${10} | ${J} | ${K}           | ${2}
-        ${speical} | ${9}  | ${J} | ${Q}           | ${1}
-        ${speical} | ${J}  | ${Q} | ${K}           | ${2}
-        ${speical} | ${10} | ${J} | ${Q}           | ${LittleJoker}
-        ${speical} | ${J}  | ${Q} | ${LittleJoker} | ${BigJoker}
-      `(
-        "test invalid case with 1 speicial: $r1♥, $r2, $r3, $r4, $r5",
-        ({ r1, r2, r3, r4, r5 }) => {
-          const cards = [
-            new Card(r1, CardSuit.heart),
-            new Card(r2, CardSuit.club),
-            new Card(r3, CardSuit.club),
-            new Card(r4, CardSuit.club),
-            new Card(r5, CardSuit.club),
-          ];
-          expect(isValid(cards, speical)).toBeFalsy();
-        }
-      );
-
-      it.each`
-        r1         | r2         | r3    | r4             | r5
-        ${speical} | ${speical} | ${1}  | ${2}           | ${6}
-        ${speical} | ${speical} | ${1}  | ${3}           | ${6}
-        ${speical} | ${speical} | ${1}  | ${4}           | ${6}
-        ${speical} | ${speical} | ${2}  | ${3}           | ${7}
-        ${speical} | ${speical} | ${2}  | ${4}           | ${7}
-        ${speical} | ${speical} | ${3}  | ${4}           | ${8}
-        ${speical} | ${speical} | ${10} | ${J}           | ${2}
-        ${speical} | ${speical} | ${10} | ${Q}           | ${2}
-        ${speical} | ${speical} | ${10} | ${K}           | ${2}
-        ${speical} | ${speical} | ${J}  | ${Q}           | ${2}
-        ${speical} | ${speical} | ${J}  | ${K}           | ${2}
-        ${speical} | ${speical} | ${Q}  | ${K}           | ${2}
-        ${speical} | ${speical} | ${10} | ${J}           | ${LittleJoker}
-        ${speical} | ${speical} | ${J}  | ${Q}           | ${LittleJoker}
-        ${speical} | ${speical} | ${J}  | ${Q}           | ${BigJoker}
-        ${speical} | ${speical} | ${J}  | ${LittleJoker} | ${BigJoker}
-      `(
-        "test invalid case with 2 speicials: $r1♥, $r2♥, $r3, $r4, $r5",
-        ({ r1, r2, r3, r4, r5 }) => {
-          const cards = [
-            new Card(r1, CardSuit.heart),
-            new Card(r2, CardSuit.heart),
-            new Card(r3, CardSuit.club),
-            new Card(r4, CardSuit.club),
-            new Card(r5, CardSuit.club),
-          ];
-          expect(isValid(cards, speical)).toBeFalsy();
-        }
-      );
+        it.each`
+          r1         | r2         | r3    | r4             | r5
+          ${speical} | ${speical} | ${1}  | ${2}           | ${6}
+          ${speical} | ${speical} | ${1}  | ${3}           | ${6}
+          ${speical} | ${speical} | ${1}  | ${4}           | ${6}
+          ${speical} | ${speical} | ${2}  | ${3}           | ${7}
+          ${speical} | ${speical} | ${2}  | ${4}           | ${7}
+          ${speical} | ${speical} | ${3}  | ${4}           | ${8}
+          ${speical} | ${speical} | ${10} | ${J}           | ${2}
+          ${speical} | ${speical} | ${10} | ${Q}           | ${2}
+          ${speical} | ${speical} | ${10} | ${K}           | ${2}
+          ${speical} | ${speical} | ${J}  | ${Q}           | ${2}
+          ${speical} | ${speical} | ${J}  | ${K}           | ${2}
+          ${speical} | ${speical} | ${Q}  | ${K}           | ${2}
+          ${speical} | ${speical} | ${10} | ${J}           | ${LittleJoker}
+          ${speical} | ${speical} | ${J}  | ${Q}           | ${LittleJoker}
+          ${speical} | ${speical} | ${J}  | ${Q}           | ${BigJoker}
+          ${speical} | ${speical} | ${J}  | ${LittleJoker} | ${BigJoker}
+        `(
+          "test invalid case with 2 speicials: $r1♥, $r2♥, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.heart),
+              new Card(r2, CardSuit.heart),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
+      });
     });
   });
 });
