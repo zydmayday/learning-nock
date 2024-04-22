@@ -143,6 +143,68 @@ const isValidThreePairs = (cards: Card[], special: number) => {
 };
 
 /**
+ * check if cards is bomb.
+ * e.g. valid example
+ * A,A,A,A
+ * 2,2,2,2,2
+ * 3,3,3,3,3,3
+ * 4,4,4,4,4,4,4
+ * 5,5,5,5,5,5,5,5
+ * LJ,LJ,BJ.BJ
+ *
+ * @param cards cards to play
+ * @param special special rank
+ * @returns true if it's bomb
+ */
+const isBomb = (cards: Card[], special: number) => {
+  // joker case
+  if (cards[0].rank > K) {
+    return (
+      cards.filter((card) => card.rank === LittleJoker).length === 2 &&
+      cards.filter((card) => card.rank === BigJoker).length === 2
+    );
+  }
+  const withoutSpecial = sortedWithoutSpecial(cards, special);
+  if (withoutSpecial.length > 8) {
+    return false;
+  }
+  return new Set(withoutSpecial.map(({ rank }) => rank)).size === 1;
+};
+
+/**
+ * check if cards is valid two threes.
+ * e.g. valid examples
+ * A,A,A,2,2,2
+ * K,K,K,A,A,A
+ *
+ * @param cards cards to play
+ * @param special special rank
+ * @returns true if valid
+ */
+const isValidTwoThrees = (cards: Card[], special: number) => {
+  console.log(cards);
+  if (hasJoker(cards)) {
+    return false;
+  }
+  const sorted = sortedWithoutSpecial(cards, special);
+  console.log(sorted);
+  const grouped = groupBy(sorted);
+  for (const key in grouped) {
+    if (grouped[key].length > 3) {
+      return false;
+    }
+  }
+  const uniqueRanks = [...new Set(sorted.map(({ rank }) => rank))];
+  if (uniqueRanks.length !== 2) {
+    return false;
+  }
+  return (
+    Math.abs(uniqueRanks[0] - uniqueRanks[1]) === 1 ||
+    (uniqueRanks.includes(K) && uniqueRanks.includes(1))
+  );
+};
+
+/**
  * check if cards are valid to play.
  *
  * @param cards cards to play
@@ -175,56 +237,43 @@ export const isValid = (cards: Card[], special: number) => {
     }
     return cards[0].rank === cards[1].rank && cards[1].rank === cards[2].rank;
   }
-  // > 3
-  if (cards.length > 3) {
-    // bomb case
-    if (hasSpecialValid(cards, special)) {
-      return true;
-    }
-    if (cards.length > 8) {
-      return false;
-    }
-    // joker case
-    if (cards[0].rank > K) {
-      return (
-        cards.filter((card) => card.rank === LittleJoker).length === 2 &&
-        cards.filter((card) => card.rank === BigJoker).length === 2
-      );
-    }
-    const rank = cards[0].rank;
-    if (cards.every((card) => card.rank === rank)) {
-      // valid normal bomb
-      return true;
-    }
-    if (cards.length === 5) {
-      // 3 + 2
-      const ranks = cards.map((c) => c.rank);
-      const grouped = groupBy(ranks);
-      const keys = Object.keys(grouped);
-      if (keys.length === 2) {
-        if (grouped[keys[0]].length === 2 || grouped[keys[1]].length === 2) {
-          return true;
-        }
-      }
-      if (
-        hasSpecial(cards, special) &&
-        cards
-          .filter((c) => c.rank === special)
-          .every((c) => c.suit === CardSuit.heart)
-      ) {
-        if (keys.length === 3) {
-          return true;
-        }
-      }
-      // straight
-      if (isStraight([...cards], special)) {
+  if (cards.length === 5) {
+    // 3 + 2
+    const ranks = cards.map((c) => c.rank);
+    const grouped = groupBy(ranks);
+    const keys = Object.keys(grouped);
+    if (keys.length === 2) {
+      if (grouped[keys[0]].length === 2 || grouped[keys[1]].length === 2) {
         return true;
       }
     }
+    if (
+      hasSpecial(cards, special) &&
+      cards
+        .filter((c) => c.rank === special)
+        .every((c) => c.suit === CardSuit.heart)
+    ) {
+      if (keys.length === 3) {
+        return true;
+      }
+    }
+    // straight
+    if (isStraight([...cards], special)) {
+      return true;
+    }
+  }
+  if (cards.length === 6) {
     // three pairs
     if (isValidThreePairs(cards, special)) {
       return true;
     }
+    if (isValidTwoThrees(cards, special)) {
+      return true;
+    }
+  }
+  // > 3
+  if (isBomb(cards, special)) {
+    return true;
   }
   return false;
 };

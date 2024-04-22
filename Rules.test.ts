@@ -122,7 +122,7 @@ describe("test Rules", () => {
           ).toBeTruthy();
         });
       });
-      describe("invalid bomn", () => {
+      describe("invalid bomb", () => {
         it("> 8 cards bomb", () => {
           const bomb = createSameCards(9);
           expect(isValid(bomb, speical)).toBeFalsy();
@@ -598,6 +598,178 @@ describe("test Rules", () => {
           ];
           expect(isValid(cards, speical)).toBeFalsy();
         });
+      });
+    });
+
+    describe("test twoThrees", () => {
+      describe("test valid case", () => {
+        it.each`
+          r1    | r2
+          ${1}  | ${2}
+          ${2}  | ${3}
+          ${3}  | ${4}
+          ${4}  | ${5}
+          ${5}  | ${6}
+          ${6}  | ${7}
+          ${7}  | ${8}
+          ${8}  | ${9}
+          ${9}  | ${10}
+          ${10} | ${J}
+          ${J}  | ${Q}
+          ${Q}  | ${K}
+          ${K}  | ${1}
+        `("test valid without special: $r1, $r2", ({ r1, r2 }) => {
+          const cards = [
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it.each`
+          r1    | r2
+          ${1}  | ${2}
+          ${2}  | ${3}
+          ${3}  | ${4}
+          ${4}  | ${5}
+          ${5}  | ${6}
+          ${6}  | ${7}
+          ${7}  | ${8}
+          ${8}  | ${9}
+          ${9}  | ${10}
+          ${10} | ${J}
+          ${J}  | ${Q}
+          ${Q}  | ${K}
+          ${K}  | ${1}
+        `("test valid with 1 special: $r1, $r2", ({ r1, r2 }) => {
+          let cards = [
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(speical, CardSuit.heart),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+          cards = [
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(speical, CardSuit.heart),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+        it.each`
+          r1    | r2
+          ${1}  | ${2}
+          ${2}  | ${3}
+          ${3}  | ${4}
+          ${4}  | ${5}
+          ${5}  | ${6}
+          ${6}  | ${7}
+          ${7}  | ${8}
+          ${8}  | ${9}
+          ${9}  | ${10}
+          ${10} | ${J}
+          ${J}  | ${Q}
+          ${Q}  | ${K}
+          ${K}  | ${1}
+        `("test valid with 2 specials: $r1, $r2", ({ r1, r2 }) => {
+          let cards = [
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(speical, CardSuit.heart),
+            new Card(speical, CardSuit.heart),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+          cards = [
+            new Card(r1, CardSuit.club),
+            new Card(speical, CardSuit.heart),
+            new Card(speical, CardSuit.heart),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+          cards = [
+            new Card(r1, CardSuit.club),
+            new Card(r1, CardSuit.club),
+            new Card(speical, CardSuit.heart),
+            new Card(r2, CardSuit.club),
+            new Card(r2, CardSuit.club),
+            new Card(speical, CardSuit.heart),
+          ];
+          expect(isValid(cards, speical)).toBeTruthy();
+        });
+      });
+      describe("test invalid case", () => {
+        it.each`
+          r1   | r2   | r3   | r4   | r5   | r6
+          ${1} | ${1} | ${1} | ${2} | ${2} | ${3}
+          ${1} | ${1} | ${2} | ${2} | ${2} | ${3}
+          ${1} | ${1} | ${1} | ${3} | ${3} | ${3}
+        `(
+          "test invalid without special: $r1, $r2, $r3, $r4, $r5, $r6",
+          ({ r1, r2, r3, r4, r5, r6 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+              new Card(r6, CardSuit.club),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
+        it.each`
+          r1   | r2   | r3   | r4   | r5
+          ${1} | ${1} | ${1} | ${1} | ${2}
+          ${1} | ${1} | ${1} | ${2} | ${3}
+          ${1} | ${1} | ${2} | ${2} | ${4}
+          ${1} | ${1} | ${1} | ${3} | ${3}
+        `(
+          "test invalid with 1 special: $r1, $r2, $r3, $r4, $r5",
+          ({ r1, r2, r3, r4, r5 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(r5, CardSuit.club),
+              new Card(speical, CardSuit.heart),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
+        it.each`
+          r1   | r2   | r3   | r4
+          ${1} | ${1} | ${1} | ${3}
+          ${1} | ${1} | ${2} | ${4}
+          ${1} | ${1} | ${4} | ${4}
+          ${K} | ${K} | ${K} | ${2}
+          ${J} | ${1} | ${1} | ${1}
+        `(
+          "test invalid with 2 special: $r1, $r2, $r3, $r4",
+          ({ r1, r2, r3, r4 }) => {
+            const cards = [
+              new Card(r1, CardSuit.club),
+              new Card(r2, CardSuit.club),
+              new Card(r3, CardSuit.club),
+              new Card(r4, CardSuit.club),
+              new Card(speical, CardSuit.heart),
+              new Card(speical, CardSuit.heart),
+            ];
+            expect(isValid(cards, speical)).toBeFalsy();
+          }
+        );
       });
     });
   });
